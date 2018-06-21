@@ -1,23 +1,69 @@
-const express = require('express');
+const mongoose = require('mongoose');
 
-let app = express();
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/TodoApp');
 
-app.get('/', (req, res) =>{
-    res.send('Hello on my Page');
+let ListaZadan = mongoose.model('ListaZadan',{
+   text:{
+       type: String,
+       required: true,
+       minlength: 1,
+       trim: true
+   },
+   completed: {
+       type: Boolean,
+       default: false
+   },
+   completedAt: {
+       type: Number,
+       default: null
+   }
 });
 
-app.get('/users', (req, res) => {
-    res.send([{
-        name: 'Mike',
-        age: 27
-    }, {
-        name: 'Andrew',
-        age: 25
-    }, {
-        name: 'Jen',
-        age: 26
-    }]);
+let User = mongoose.model('User',{
+    email: {
+        type: String,
+        required: true,
+        minlength: 1,
+        trim: true
+    }
 });
 
-app.listen(3001);
-module.exports.app = app;
+// let obListaZadan = new ListaZadan({
+//     text: 'Ugotować obiad'
+// });
+//
+// obListaZadan.save().then((doc) =>{
+//       console.log('Zapisano: ', doc);
+//     },
+//     (err)=>{
+//       console.log('Problem z zapisem: ',err);
+//     });
+
+
+// let obListaZadan = new ListaZadan({
+//     text: 'Zrobić zakupy',
+//     //completed: true,
+//     //completedAt: 21072018
+// });
+//
+// obListaZadan.save().then((docs)=>{
+//     console.log('Lista zapisana: ',docs);
+// }, (err)=>{
+//     console.log('Nie udało się zapisać: ',err);
+// });
+
+let obUser = new User({
+    email: 'jstolorz@gmail.com'
+});
+
+obUser.save().then((docs)=>{
+    console.log('Zapisano: ',docs);
+}, (err)=>{
+    console.log('Nie udało się zapisać: ',err);
+});
+
+
+
+
+
