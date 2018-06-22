@@ -1,69 +1,32 @@
-const mongoose = require('mongoose');
+let express  = require('express');
+let bodyParser = require('body-parser');
 
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+let {mongoose} = require('./db/mongoose');
+let {ListaZadan} = require('./models/todo');
+let {User} = require('./models/user');
 
-let ListaZadan = mongoose.model('ListaZadan',{
-   text:{
-       type: String,
-       required: true,
-       minlength: 1,
-       trim: true
-   },
-   completed: {
-       type: Boolean,
-       default: false
-   },
-   completedAt: {
-       type: Number,
-       default: null
-   }
+
+let app = express();
+
+app.use(bodyParser.json());
+
+app.post('/todos',(req,res)=>{
+    let listaZadan = new ListaZadan({
+        text: req.body.text,
+        completed: req.body.completed,
+        completedAt: req.body.completedAt
+    });
+
+    listaZadan.save().then((doc)=>{
+        res.send(doc);
+    }, (err)=>{
+        res.status(400).send(err);
+    });
 });
 
-let User = mongoose.model('User',{
-    email: {
-        type: String,
-        required: true,
-        minlength: 1,
-        trim: true
-    }
+app.listen(3000, ()=>{
+   console.log('Started on port 3000');
 });
-
-// let obListaZadan = new ListaZadan({
-//     text: 'Ugotować obiad'
-// });
-//
-// obListaZadan.save().then((doc) =>{
-//       console.log('Zapisano: ', doc);
-//     },
-//     (err)=>{
-//       console.log('Problem z zapisem: ',err);
-//     });
-
-
-// let obListaZadan = new ListaZadan({
-//     text: 'Zrobić zakupy',
-//     //completed: true,
-//     //completedAt: 21072018
-// });
-//
-// obListaZadan.save().then((docs)=>{
-//     console.log('Lista zapisana: ',docs);
-// }, (err)=>{
-//     console.log('Nie udało się zapisać: ',err);
-// });
-
-let obUser = new User({
-    email: 'jstolorz@gmail.com'
-});
-
-obUser.save().then((docs)=>{
-    console.log('Zapisano: ',docs);
-}, (err)=>{
-    console.log('Nie udało się zapisać: ',err);
-});
-
-
 
 
 
