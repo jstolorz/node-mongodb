@@ -27,6 +27,11 @@ ListaZadan.findById(id).then((todo)=>{
 
 
 User.findById('5b2bb1f306f9db4d237ebd3b').then((user)=>{
+   if(!user){
+       return console.log('User not found');
+   }
 
-
+   console.log(JSON.stringify(user,undefined,2));
+}, (e) => {
+    console.log(e);
 });
