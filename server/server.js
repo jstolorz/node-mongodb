@@ -1,5 +1,6 @@
 let express  = require('express');
 let bodyParser = require('body-parser');
+let {ObjectID} = require('mongodb');
 
 let {mongoose} = require('./db/mongoose');
 let {ListaZadan} = require('./models/todo');
@@ -32,9 +33,33 @@ app.get('/todos',(req,res)=>{
     });
 });
 
+app.get('/todos/:id',(req,res)=>{
+    let id = req.params.id;
+
+    if(!ObjectID.isValid(id)){
+        return res.status(400).send();
+    }
+
+    ListaZadan.findById(id).then((todos)=>{
+
+        if(!todos){
+            return res.status(400).send();
+        }
+
+        res.send({todos});
+    },(e) => {
+        res.status(400).send();
+    });
+
+
+});
+
+
 app.listen(3000, ()=>{
    console.log('Started on port 3000');
 });
+
+
 
 module.exports = {app};
 
