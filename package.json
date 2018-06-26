@@ -22,7 +22,7 @@
     "test-watch": "nodemon --exec 'npm test'"
   },
   "engines": {
-
+      "node": "8.10.0"
   }
  ,
   "author": "Janusz Stolorz",
