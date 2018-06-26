@@ -1,11 +1,12 @@
-const express  = require('express');
-const bodyParser = require('body-parser');
-const {ObjectID} = require('mongodb');
-const {ListaZadan} = require('./models/todo');
+let express  = require('express');
+let bodyParser = require('body-parser');
+
+let {mongoose} = require('./db/mongoose');
+let {ListaZadan} = require('./models/todo');
+let {User} = require('./models/user');
+let {ObjectID} = require('mongodb');
 
 const port = process.env.PORT || 3000;
-
-
 
 let app = express();
 
@@ -33,33 +34,33 @@ app.get('/todos',(req,res)=>{
     });
 });
 
-app.get('/todos/:id',(req,res)=>{
-    let id = req.params.id;
 
-    if(!ObjectID.isValid(id)){
-        return res.status(400).send();
+app.get('/todos/:id', (req, res) => {
+    var id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
     }
 
-    ListaZadan.findById(id).then((todos)=>{
-
-        if(!todos){
-            return res.status(400).send();
+    ListaZadan.findById(id).then((todo) => {
+        if (!todo) {
+            return res.status(404).send();
         }
 
-        res.send({todos});
-    },(e) => {
+        res.send({todo});
+    }).catch((e) => {
         res.status(400).send();
     });
-
-
 });
 
 
-app.listen(port, ()=>{
-   console.log(`Started on port ${port}`);
+// app.listen(3000, ()=>{
+//    console.log('Started on port 3000');
+// });
+
+app.listen(port, () => {
+    console.log(`Started up at port ${port}`);
 });
-
-
 
 module.exports = {app};
 
