@@ -1,7 +1,8 @@
-let express  = require('express');
-let bodyParser = require('body-parser');
+const express  = require('express');
+const bodyParser = require('body-parser');
+const {mongoose} = require('./db/mongoose');
+const _ = require('lodash');
 
-let {mongoose} = require('./db/mongoose');
 let {ListaZadan} = require('./models/todo');
 let {User} = require('./models/user');
 let {ObjectID} = require('mongodb');
@@ -72,6 +73,37 @@ app.delete('/todos/:id',(req,res) => {
     }).catch((e) => {
         res.status(400).send('Bed 400! catch');
     })
+
+});
+
+
+app.patch('/todos/:id', (req, res) =>{
+
+    let id = req.params.id;
+    let body = _.pick(req.body, ['text','completed']);
+
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send("Bed id");
+    }
+
+    if(_.isBoolean(body.completed) && body.completed){
+        body.completedAt = new Date().getTime();
+    }else{
+        body.completed = false;
+        body.completedAt = null;
+    }
+
+    ListaZadan.findByIdAndUpdate(id, {$set:body}, {new: true}).then((todo) => {
+
+        if(!todo){
+            return res.status(404).send('Problem with update');
+        }
+
+        res.send({todo});
+
+    }).catch((e) => {
+        res.status(400).send('From catch');
+    });
 
 });
 
