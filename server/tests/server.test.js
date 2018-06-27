@@ -79,20 +79,54 @@ describe('DELETE /todos/:id',() => {
 
     it('schould delete todos by id', (done) => {
 
+        let hexId = todos[0]._id.toHexString();
+
         request(app)
-            .delete(`/todos/${todos[0]._id.toHexString()}`)
-            .end(done);
+            .delete(`/todos/${hexId}`)
+            .expect(200)
+            .end((err, res) => {
+
+                if(err){
+                    return done(err);
+                }
+
+                ListaZadan.findById(hexId).then((todo) => {
+                    expect(todo).toNotExist();
+                    done();
+                }).catch((e) => {
+                    done(e);
+                });
+
+            });
     });
 
-    it('should not delete todoes by id', (done) => {
+    it('should not delete todoes by not exist id', (done) => {
 
         let hexId = new ObjectID().toHexString();
 
         request(app)
-            .delete(hexId)
+            .delete(`/todos/${hexId}`)
+            .expect(404)
             .end(done);
 
     });
+
+    it('should not delete todos by wrong id', (done) => {
+        let id = '3425aaaa';
+
+
+        request(app)
+            .delete(`/todos/${id}`)
+            .expect(404)
+            .end(done);
+
+    });
+
+
+
+
+
+
 
 });
 
