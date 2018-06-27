@@ -54,6 +54,29 @@ app.get('/todos/:id', (req, res) => {
 });
 
 
+app.delete('/todos/:id',(req,res) => {
+
+    let id = req.params.id;
+
+    if(!ObjectID.isValid(id)){
+        return res.status(400).send('Bed 400! id');
+    }
+
+    ListaZadan.findByIdAndRemove(id).then((todo) => {
+
+        if(!todo){
+            return res.status(400).send('Bed 400! remove');
+        }
+
+        res.send(todo);
+    }).catch((e) => {
+        res.status(400).send('Bed 400! catch');
+    })
+
+});
+
+
+
 // app.listen(3000, ()=>{
 //    console.log('Started on port 3000');
 // });
