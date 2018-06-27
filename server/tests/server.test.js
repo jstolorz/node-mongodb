@@ -1,22 +1,23 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {ListaZadan} = require('./../models/todo');
 
 const todos = [{
-    text: 'Nakarmić pasa'
-},{
-    text: 'Trening kettelball'
+    _id: new ObjectID(),
+    text: 'First test todo'
+}, {
+    _id: new ObjectID(),
+    text: 'Second test todo'
 }];
 
-// beforeEach((done) => {
-//     ListaZadan.remove({})
-//         .then(()=>{
-//            return ListaZadan.insertMany(todos);
-//         })
-//         .then(() => done());
-// });
+beforeEach((done) => {
+    ListaZadan.remove({}).then(() => {
+        return ListaZadan.insertMany(todos);
+    }).then(() => done());
+});
 
 describe('POST /todos', () =>{
 
@@ -74,6 +75,25 @@ describe('GET /todos', ()=>{
 
 });
 
+describe('DELETE /todos/:id',() => {
 
+    it('schould delete todos by id', (done) => {
+
+        request(app)
+            .delete(`/todos/${todos[0]._id.toHexString()}`)
+            .end(done);
+    });
+
+    it('should not delete todoes by id', (done) => {
+
+        let hexId = new ObjectID().toHexString();
+
+        request(app)
+            .delete(hexId)
+            .end(done);
+
+    });
+
+});
 
 
