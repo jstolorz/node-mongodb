@@ -17,11 +17,12 @@ let app = express();
 
 app.use(bodyParser.json());
 
-app.post('/todos',(req,res)=>{
+app.post('/todos', authenticate ,(req,res)=>{
     let listaZadan = new ListaZadan({
         text: req.body.text,
         completed: req.body.completed,
-        completedAt: req.body.completedAt
+        completedAt: req.body.completedAt,
+        _creator: req.user._id
     });
 
     listaZadan.save().then((doc)=>{
@@ -31,8 +32,10 @@ app.post('/todos',(req,res)=>{
     });
 });
 
-app.get('/todos',(req,res)=>{
-    ListaZadan.find().then((todos)=>{
+app.get('/todos',authenticate ,(req,res)=>{
+    ListaZadan.find({
+        _creator: req.user._id
+    }).then((todos)=>{
         res.send({todos})
     },(e)=>{
         res.status(400).send(e);
