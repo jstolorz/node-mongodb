@@ -4,6 +4,7 @@ const express  = require('express');
 const bodyParser = require('body-parser');
 const {mongoose} = require('./db/mongoose');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 let {ListaZadan} = require('./models/todo');
 let {User} = require('./models/user');
@@ -126,6 +127,22 @@ app.post('/users', (req, res) => {
 
 app.get('/users/me', authenticate, (req,res) => {
     res.send(req.user);
+});
+
+app.post('/users/login', (req, res) => {
+
+    let body = _.pick(req.body, ['email', 'password']);
+
+    User.findByCredentials(body.email, body.password).then((user) => {
+
+        return user.generateAuthToken().then((token) => {
+            res.header('x-auth',token).send({user});
+        });
+
+    }).catch((e) => {
+        res.status(400).send('Bad Credential!');
+    });
+
 });
 
 // app.listen(3000, ()=>{
