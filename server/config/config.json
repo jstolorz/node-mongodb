@@ -1,0 +1,10 @@
+{
+  "test":{
+    "PORT": 3000,
+    "MONGOLAB_CRIMSON_URI": "mongodb://localhost:27017/TodoAppTest"
+  },
+  "development":{
+    "PORT": 3000,
+    "MONGOLAB_CRIMSON_URI": "mongodb://localhost:27017/TodoApp"
+  }
+}
